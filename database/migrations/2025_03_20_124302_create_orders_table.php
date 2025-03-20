@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->enum('status',['Pending','Preparing','Delivered','cancelled'])->default('Pending');
+            $table->foreignId('client_id')->constrained('users');
+            $table->foreignId('plant_id')->constrained('plants');
             $table->timestamps();
         });
     }
