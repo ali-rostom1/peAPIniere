@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('path');
-            $table->foreignId("plant_id")->constrained('plants')->onDelete('cascade');
+            $table->enum('status',['Pending','Preparing','Delivered','cancelled'])->default('Pending');
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('orders');
     }
 };
