@@ -27,6 +27,7 @@ class PlantStoreRequest extends FormRequest
             'category' => 'required|string',
             'description' => 'nullable|string',
             'admin_id' => 'required|exists:users,id',
+            'images' => 'nullable|array|max:4',
         ];
     }
 }
