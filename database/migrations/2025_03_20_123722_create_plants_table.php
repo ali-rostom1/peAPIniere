@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('category');
             $table->string('slug');
             $table->text('description');
+            $table->foreignId('admin_id')->constrained('users','id')->onDelete('cascade');
             $table->timestamps();
         });
     }

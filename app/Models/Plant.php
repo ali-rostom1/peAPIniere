@@ -14,7 +14,7 @@ class Plant extends Model
         'name',
         'price',
         'category',
-        'user_id',
+        'admin_id',
     ];
     public function user()
     {
