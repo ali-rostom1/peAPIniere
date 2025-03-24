@@ -20,7 +20,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-            $user->assignRole('admin');
+            $user->assignRole('client');
             return response()->json([
                 'status' => 'success',
                 'message' => 'User created successfully',
@@ -30,6 +30,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'An internal server error occurred while trying to register the user.',
+                'error' => $e->getMessage(),
             ],500);
         }
     }
@@ -42,21 +43,26 @@ class AuthController extends Controller
                     'status' => 'error',
                     'message' => 'Couldnt find user with given credentials',
                 ],401);
-            }
+            } 
             $user = Auth::user();
+            // $refreshToken = JWTAuth::claims(['type' => 'refresh'])->setTTL(config('jwt.refresh_ttl'))->fromUser($user);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully authentificated user',
                 'user' => $user,
                 'authorisation' => [
-                    'token' => $token,
-                    'type' => 'bearer',
+                    'access_token' => $token,
+                    'token' => JWTAuth::getToken(),
+                    // 'refresh_token' => $refreshToken,
+                    'token_type' => 'bearer',
+                    'expires_in' => JWTAuth::factory()->getTTL() * 60,
                 ]
             ]);
         }catch(\Throwable $e){
             return response()->json([
                 'status' => 'error',
                 'message' => 'An internal server error occurred while trying to register the user.',
+                'error' => $e->getMessage(),
             ],500);
         }
     }
@@ -76,20 +82,17 @@ class AuthController extends Controller
         }
         
     }
-    public function refresh()
+    public function refreshToken(Request $request)
     {
-        try{
-            $token = JWTAuth::refresh(JWTAuth::getToken());
+        try {
+            $newAccessToken = Auth::refresh();
             return response()->json([
-                'status' => 'success',
-                'message' => 'Successfully refreshed token',
-                'token' => $token,
+                'access_token' => $newAccessToken,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60, 
             ]);
-        }catch(\Throwable $e){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An internal server error ocurred while trying to refresh your token',
-            ],500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid refresh token'], 401);
         }
     }
 

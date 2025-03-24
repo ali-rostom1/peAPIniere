@@ -7,8 +7,10 @@ use App\Http\Requests\PlantUpdateRequest;
 use App\Models\Plant;
 use App\Repositories\Interfaces\PlantRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PlantController extends Controller
 {
@@ -17,6 +19,7 @@ class PlantController extends Controller
     {
         $this->plantRepository = $plantRepository;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +30,7 @@ class PlantController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if($user->cannot(['view plants','manage plants'])){
+        if(!$user->canAny(['view plants','manage plants'])){
             return response()->json([
                 'status' => false,
                 'message' => 'You dont have permissions to view all plants',
@@ -101,7 +104,7 @@ class PlantController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if($user->cannot('view plants')){
+        if(!$user->canAny(['view plants','manage plants'])){
             return response()->json([
                 'status' => false,
                 'message' => 'You dont have permissions to view plants ',
@@ -139,7 +142,7 @@ class PlantController extends Controller
      * @param string $slug
      * @return JsonResponse
      */
-    public function update(PlantUpdateRequest $request, string $slug): JsonResponse
+    public function update(Request $request, string $slug): JsonResponse
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -151,10 +154,10 @@ class PlantController extends Controller
             ],403);
         }
         try {
-            $data = $request->validated();
+            $data = $request->all();
 
             $uploadedImages = $request->hasFile('images') ? $request->file('images') : [];
-
+            
             $plant = $this->plantRepository->update($slug, $data, $uploadedImages);
 
             if (!$plant) {

@@ -5,6 +5,7 @@ use App\Models\Plant;
 use App\Repositories\Interfaces\PlantRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,14 +28,14 @@ use Illuminate\Support\Facades\Storage;
                     'price' => $data['price'],
                     'category' => $data['category'],
                     'description' => $data['description'],
-                    'admin_id' => $data['admin_id'],
+                    'admin_id' => Auth::id(),
                 ]);
                 if($uploadedImages){
                     foreach($uploadedImages as $image){
                         $path = $image->store('public/images');
                         $plant->images()->create([
                             'path' => Storage::url($path),
-                            'title' => $plant->title,
+                            'title' => $plant->name,
                         ]);
                     }
                 }
@@ -61,14 +62,14 @@ use Illuminate\Support\Facades\Storage;
                     'price' => $data['price'],
                     'category' => $data['category'],
                     'description' => $data['description'],
-                    'admin_id' => $data['admin_id'],
+                    'admin_id' => Auth::id(),
                 ]);
                 if($uploadedImages){
                     $plant->images()->delete();
                     foreach($uploadedImages as $image){
                         $path = $image->store('public/images');
                         $plant->images()->create([
-                            'name' => $plant->name,
+                            'title' => $plant->name,
                             'path' => $path,
                         ]);
                     }

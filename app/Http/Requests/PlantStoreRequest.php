@@ -26,7 +26,6 @@ class PlantStoreRequest extends FormRequest
             'price' => 'required|numeric',
             'category' => 'required|string',
             'description' => 'nullable|string',
-            'admin_id' => 'required|exists:users,id',
             'images' => 'nullable|array|max:4',
         ];
     }
