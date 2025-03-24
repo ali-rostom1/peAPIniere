@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\PlantRepositoryInterface;
+use App\Repositories\OrderRepository;
 use App\Repositories\PlantRepository;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -30,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PlantRepositoryInterface::class,
             PlantRepository::class
+        );
+        $this->app->bind(
+            OrderRepositoryInterface::class,
+            OrderRepository::class
         );
     }
 }
