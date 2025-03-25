@@ -103,7 +103,6 @@ class PlantController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        dd($user);
         if(!$user->canAny(['view plants','manage plants'])){
             return response()->json([
                 'status' => false,
