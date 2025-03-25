@@ -308,7 +308,7 @@ class OrderController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         } 
     }
-    public function markAsPrepared(OrderStatusRequest $request)
+    public function markAsPreparing(OrderStatusRequest $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
