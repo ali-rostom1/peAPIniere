@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Factories\PlantDtoFactory;
+use App\DTO\Factories\PlantWithImageDtoFactory;
+use App\DTO\PlantDto;
+use App\DTO\PlantWithImageDto;
 use App\Http\Requests\PlantStoreRequest;
 use App\Http\Requests\PlantUpdateRequest;
 use App\Models\Plant;
@@ -73,10 +77,11 @@ class PlantController extends Controller
         }
         try {
             $data = $request->validated();
+            
+            $request->hasFile('images') ? $data['images'] = $request->file('images') : null ;
 
-            $uploadedImages = $request->hasFile('images') ? $request->file('images') : [];
-
-            $plant = $this->plantRepository->create($data, $uploadedImages);
+            $data = PlantWithImageDtoFactory::fromArray($data);
+            $plant = $this->plantRepository->create($data);
 
             return response()->json([
                 'status' => true,
@@ -153,11 +158,13 @@ class PlantController extends Controller
             ],403);
         }
         try {
-            $data = $request->all();
-
-            $uploadedImages = $request->hasFile('images') ? $request->file('images') : [];
+            $data = $request->validated();
             
-            $plant = $this->plantRepository->update($slug, $data, $uploadedImages);
+            $request->hasFile('images') ? $data['images'] = $request->file('images') : null ;
+
+            $data = PlantWithImageDtoFactory::fromArray($data);
+            
+            $plant = $this->plantRepository->update($slug, $data);
 
             if (!$plant) {
                 return response()->json([

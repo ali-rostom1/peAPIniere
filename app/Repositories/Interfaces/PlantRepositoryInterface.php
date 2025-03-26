@@ -1,13 +1,14 @@
 <?php
-    namespace App\Repositories\Interfaces;
+namespace App\Repositories\Interfaces;
 
-    use Illuminate\Pagination\LengthAwarePaginator;
+use App\DTO\PlantWithImageDto;
+use Illuminate\Pagination\LengthAwarePaginator;
 
     interface PlantRepositoryInterface
     {
         public function all() : LengthAwarePaginator;
-        public function find(string $slug);
-        public function create(array $data,array $uploadedImages);
-        public function update(string $slug, array $data,array $uploadedImages);
-        public function delete(string $slug);
+        public function find(string $slug) : ?PlantWithImageDto;
+        public function create(PlantWithImageDto $data) : PlantWithImageDto;
+        public function update(string $slug, PlantWithImageDto $data) : ?PlantWithImageDto;
+        public function delete(string $slug) : bool;
     }
